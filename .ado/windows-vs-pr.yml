@@ -17,19 +17,17 @@ jobs:
         X64Debug:
           BuildConfiguration: Debug
           BuildPlatform: x64
-          UseRNFork: 'false'
+          UseRNFork: false
     pool:
       vmImage: $(vmImage)
     timeoutInMinutes: 45 # how long to run the job before automatically cancelling
     cancelTimeoutInMinutes: 5 # how much time to give 'run always even if cancelled tasks' before killing them
     steps:
       - checkout: self # self represents the repo where the initial Pipelines YAML file was found
-      
-      - script: echo main - variables['UseRNFork']
 
       - template: templates/yarn-setup-install-build.yml
         parameters:
-          useRNFork: $(UseRNFork)
+          useRNFork: false
 
   - job: Win32
     displayName: Win32

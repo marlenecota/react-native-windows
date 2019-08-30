@@ -1,5 +1,5 @@
 parameters:
-  useRNFork: 'true'
+  useRNFork: true
 
 steps:
   - script: echo template - ${{ parameters.useRNFork }}
