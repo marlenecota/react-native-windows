@@ -2,9 +2,18 @@ parameters:
   useRNFork: true
 
 steps:
-  - script: echo one
+  - script: echo ${{ parameters.useRNFork }}
+    displayName: Use fork
+    condition: and(succeeded(), eq(parameters.useRNFork, 'true'))
+
+  - script: echo ${{ parameters.useRNFork }}
+    displayName: No dot use fork fork
+    condition: and(succeeded(), eq(parameters.useRNFork, 'false'))
+
   - ${{ if eq(parameters.useRNFork, 'true') }}:
+    - script: echo one
     - script: echo two
+
   # - script: node scripts/useUnForkedRN.js
   #   displayName: Modify package.json to use unforked RN
   #   workingDirectory: vnext
