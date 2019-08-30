@@ -15,7 +15,7 @@ steps:
     displayName: yarn install (Using microsoft/react-native)
     condition: and(succeeded(), eq(variables['UseRNFork'], 'true'))
 
-  - template: templates/stop-packagers.yml
+  - template: stop-packagers.yml
 
   - script: yarn build
     displayName: yarn build
