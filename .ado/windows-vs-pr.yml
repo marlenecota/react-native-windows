@@ -17,7 +17,7 @@ jobs:
         X64Debug:
           BuildConfiguration: Debug
           BuildPlatform: x64
-          UseRNFork: false
+          UseRNFork: 'false'
     pool:
       vmImage: $(vmImage)
     timeoutInMinutes: 45 # how long to run the job before automatically cancelling

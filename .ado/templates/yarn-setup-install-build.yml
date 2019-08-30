@@ -1,10 +1,10 @@
 parameters:
-  useRNFork: true
+  useRNFork: 'true'
 
 steps:
   - script: echo template - ${{ parameters.useRNFork }}
 
-  - ${{ if eq(parameters.useRNFork, false) }}:
+  - ${{ if eq(parameters.useRNFork, 'false') }}:
     - script: node scripts/useUnForkedRN.js
       displayName: Modify package.json to use unforked RN
       workingDirectory: vnext
@@ -15,7 +15,7 @@ steps:
     - script: yarn install
       displayName: yarn install (Using facebook/react-native)
 
-  - ${{ if eq(parameters.useRNFork, true) }}:
+  - ${{ if eq(parameters.useRNFork, 'true') }}:
     - script: yarn install --frozen-lockfile
       displayName: yarn install (Using microsoft/react-native)
 
