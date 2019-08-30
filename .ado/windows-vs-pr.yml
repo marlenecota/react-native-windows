@@ -29,7 +29,7 @@ jobs:
 
       - template: templates/yarn-setup-install-build.yml
         parameters:
-          useRNFork: variables['UseRNFork']
+          useRNFork: $(UseRNFork)
 
   - job: Win32
     displayName: Win32
