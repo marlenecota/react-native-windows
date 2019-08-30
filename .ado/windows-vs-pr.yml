@@ -25,12 +25,7 @@ jobs:
     steps:
       - checkout: self # self represents the repo where the initial Pipelines YAML file was found
 
-      - script: echo ${{ variables.UseRNFork }}
-        displayName: echo - main
-
       - template: templates/yarn-setup-install-build.yml
-        parameters:
-          useRNFork: ${{ variables.UseRNFork }}
 
   - job: Win32
     displayName: Win32
@@ -38,6 +33,8 @@ jobs:
       vmImage: $(vmImage)
     timeoutInMinutes: 45 # how long to run the job before automatically cancelling
     cancelTimeoutInMinutes: 5 # how much time to give 'run always even if cancelled tasks' before killing them
+    variables:
+      UseRNFork: true
     steps:
       - checkout: self # self represents the repo where the initial Pipelines YAML file was found
 
