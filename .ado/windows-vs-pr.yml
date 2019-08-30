@@ -12,6 +12,25 @@ variables:
 jobs:
   - job: UWPPR
     displayName: UWP PR
+    strategy:
+      matrix:
+        X64Debug:
+          BuildConfiguration: Debug
+          BuildPlatform: x64
+          UseRNFork: false
+    pool:
+      vmImage: $(vmImage)
+    timeoutInMinutes: 45 # how long to run the job before automatically cancelling
+    cancelTimeoutInMinutes: 5 # how much time to give 'run always even if cancelled tasks' before killing them
+    steps:
+      - checkout: self # self represents the repo where the initial Pipelines YAML file was found
+      
+      - template: templates/yarn-setup-install-build.yml
+        parameters:
+          useRNFork: $(UseRNFork)
+
+  - job: Win32
+    displayName: Win32
     pool:
       vmImage: $(vmImage)
     timeoutInMinutes: 45 # how long to run the job before automatically cancelling
@@ -20,7 +39,3 @@ jobs:
       - checkout: self # self represents the repo where the initial Pipelines YAML file was found
 
       - template: templates/yarn-setup-install-build.yml
-      
-      - template: templates/yarn-setup-install-build.yml
-        parameters:
-          useRNFork: false

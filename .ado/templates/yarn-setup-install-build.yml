@@ -2,23 +2,20 @@ parameters:
   useRNFork: true
 
 steps:
-  - ${{ if eq(parameters.useRNFork, 'true') }}:
-    - script: echo ${{ parameters.useRNFork }}
-      displayName: Use fork
-    - script: echo one
-      displayName: one
-
-  - script: echo two
-    displayName: two
-
   - ${{ if eq(parameters.useRNFork, 'false') }}:
-    - script: echo ${{ parameters.useRNFork }}
-      displayName: No dot use fork fork
-    - script: echo three
-      displayName: three
+    - script: node scripts/useUnForkedRN.js
+      displayName: Modify package.json to use unforked RN
+      workingDirectory: vnext
 
-  - script: echo four
-    displayName: four
+      # We can't use a frozen lockfile for both the fork and non-fork, since they install different dependencies
+      # We don't want to force devs to update/create two lock files on every change, so just don't freeze when
+      # using the non fork version.
+    - script: yarn install
+      displayName: yarn install (Using facebook/react-native)
+
+  - ${{ if eq(parameters.useRNFork, 'true') }}:
+    - script: yarn install --frozen-lockfile
+      displayName: yarn install (Using microsoft/react-native)
 
   # - script: node scripts/useUnForkedRN.js
   #   displayName: Modify package.json to use unforked RN
