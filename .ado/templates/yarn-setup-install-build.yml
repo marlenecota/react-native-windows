@@ -15,7 +15,7 @@ steps:
     displayName: yarn install (Using microsoft/react-native)
     condition: and(succeeded(), eq(variables['UseRNFork'], 'true'))
 
-  - if and(succeeded(), eq(variables['UseRNFork'], 'true')):
+  - ${{ if eq(variables['UseRNFork'], 'true') }}:
     - script: echo test
       displayName: test
 
