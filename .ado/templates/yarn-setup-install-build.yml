@@ -2,11 +2,9 @@ parameters:
   useRNFork: true
 
 steps:
-  - script: ${{ parameters.useRNFork }}
+  - script: echo test
     displayName: echo - template
-
-  - ${{ if eq(variables.UseRNFork, 'false') }}:
-    - script: echo test
+    condition: and(succeeded(), eq(variables['UseRNFork'], 'false'))
 
   - ${{ if eq(parameters.useRNFork, 'false') }}:
     - script: node scripts/useUnForkedRN.js
