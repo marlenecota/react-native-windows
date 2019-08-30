@@ -25,9 +25,12 @@ jobs:
     steps:
       - checkout: self # self represents the repo where the initial Pipelines YAML file was found
 
+      - script: echo ${{ variables.UseRNFork }}
+        displayName: echo - main
+
       - template: templates/yarn-setup-install-build.yml
         parameters:
-          useRNFork: false
+          useRNFork: ${{ variables.UseRNFork }}
 
   - job: Win32
     displayName: Win32

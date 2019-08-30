@@ -2,7 +2,8 @@ parameters:
   useRNFork: true
 
 steps:
-  - script: echo template - ${{ parameters.useRNFork }}
+  - script: ${{ parameters.useRNFork }}
+    displayName: echo - template
 
   - ${{ if eq(variables.UseRNFork, 'false') }}:
     - script: echo test
