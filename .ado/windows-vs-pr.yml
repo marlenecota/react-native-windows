@@ -25,8 +25,8 @@ jobs:
     steps:
       - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       
-      - script: echo $(UseRNFork)
-      
+      - script: echo main - $(UseRNFork)
+
       - template: templates/yarn-setup-install-build.yml
         parameters:
           useRNFork: $(UseRNFork)
