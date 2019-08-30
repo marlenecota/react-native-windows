@@ -4,6 +4,9 @@ parameters:
 steps:
   - script: echo template - ${{ parameters.useRNFork }}
 
+  - ${{ if eq(variables.UseRNFork, 'false') }}:
+    - script: echo test
+
   - ${{ if eq(parameters.useRNFork, 'false') }}:
     - script: node scripts/useUnForkedRN.js
       displayName: Modify package.json to use unforked RN
