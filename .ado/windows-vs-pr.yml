@@ -25,4 +25,4 @@ jobs:
         persistCredentials: false # set to 'true' to leave the OAuth token in the Git config after the initial fetch
 
       - script: echo $(vmImage)
-        name: echo var
+        name: echoVar
