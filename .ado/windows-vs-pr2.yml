@@ -6,6 +6,9 @@ trigger: none # will disable CI builds entirely
 pr:
   - master 
 
+variables:
+  vmImage: 'vs2017-win2016'
+
 jobs:
   - job: UWPPR
     displayName: UWP PR
@@ -40,7 +43,7 @@ jobs:
           BuildPlatform: x86
           UseRNFork: false
     pool:
-      vmImage: vs2017-win2016
+      vmImage: $(vmImage)
     timeoutInMinutes: 45 # how long to run the job before automatically cancelling
     cancelTimeoutInMinutes: 5 # how much time to give 'run always even if cancelled tasks' before killing them
     steps:
@@ -138,7 +141,7 @@ jobs:
   - job: CliInit
     displayName: Verify react-native init
     pool:
-      vmImage: vs2017-win2016
+      vmImage: $(vmImage)
     timeoutInMinutes: 30 # how long to run the job before automatically cancelling
     cancelTimeoutInMinutes: 5 # how much time to give 'run always even if cancelled tasks' before killing them
     steps:
@@ -241,7 +244,7 @@ jobs:
           BuildConfiguration: Release
           BuildPlatform: arm
     pool:
-      vmImage: vs2017-win2016
+      vmImage: $(vmImage)
     timeoutInMinutes: 50 # how long to run the job before automatically cancelling
     cancelTimeoutInMinutes: 5 # how much time to give 'run always even if cancelled tasks' before killing them
     steps:
@@ -321,7 +324,7 @@ jobs:
     dependsOn: RnwNativePRBuild
     displayName: React-Native-Windows Build and Pack Nuget
     pool:
-      vmImage: vs2017-win2016
+      vmImage: $(vmImage)
     timeoutInMinutes: 30 # how long to run the job before automatically cancelling
     cancelTimeoutInMinutes: 5 # how much time to give 'run always even if cancelled tasks' before killing them
     steps:
@@ -337,7 +340,7 @@ jobs:
   - job: RNWFormatting
     displayName: Verify change files + formatting
     pool:
-      vmImage: vs2017-win2016
+      vmImage: $(vmImage)
     timeoutInMinutes: 10 # how long to run the job before automatically cancelling
     cancelTimeoutInMinutes: 5 # how much time to give 'run always even if cancelled tasks' before killing them
     steps:
@@ -396,7 +399,7 @@ jobs:
         #  BuildPlatform: x86
         #  UTTestOutputConfigDir: Release
     pool:
-      vmImage: vs2017-win2016
+      vmImage: $(vmImage)
     timeoutInMinutes: 15 # how long to run the job before automatically cancelling
     cancelTimeoutInMinutes: 5 # how much time to give 'run always even if cancelled tasks' before killing them
 
