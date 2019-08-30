@@ -2,17 +2,23 @@ parameters:
   useRNFork: true
 
 steps:
-  - script: echo ${{ parameters.useRNFork }}
-    displayName: Use fork
-    condition: and(succeeded(), ${{ eq(parameters.useRNFork, 'true') }} )
-
-  - script: echo ${{ parameters.useRNFork }}
-    displayName: No dot use fork fork
-    condition: and(succeeded(), ${{ eq(parameters.useRNFork, 'false') }} )
-
   - ${{ if eq(parameters.useRNFork, 'true') }}:
+    - script: echo ${{ parameters.useRNFork }}
+      displayName: Use fork
     - script: echo one
-    - script: echo two
+      displayName: one
+
+  - script: echo two
+    displayName: two
+
+  - ${{ if eq(parameters.useRNFork, 'false') }}:
+    - script: echo ${{ parameters.useRNFork }}
+      displayName: No dot use fork fork
+    - script: echo three
+      displayName: three
+
+  - script: echo four
+    displayName: four
 
   # - script: node scripts/useUnForkedRN.js
   #   displayName: Modify package.json to use unforked RN
