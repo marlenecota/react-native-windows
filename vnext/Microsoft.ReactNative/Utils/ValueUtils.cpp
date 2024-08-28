@@ -89,8 +89,13 @@ struct BrushCache {
     auto dq = winrt::dispatching::DispatcherQueue::GetForCurrentThread();
     m_uiSettings.ColorValuesChanged([this, dq](auto &&sender, auto &&args) {
       dq.TryEnqueue([this]() {
+        auto resources{winrt::Application::Current().Resources()};
+        if (auto element{winrt::Microsoft::ReactNative::XamlHelper::GetRequestedTheme()}) {
+          resources = element.Resources();
+        }
+
         for (auto &entry : m_map) {
-          winrt::IInspectable resource{winrt::Application::Current().Resources().Lookup(winrt::box_value(entry.first))};
+          winrt::IInspectable resource{resources.Lookup(winrt::box_value(entry.first))};
           if (auto oldSCBrush = entry.second.try_as<xaml::Media::SolidColorBrush>()) {
             if (auto newSCBrush = resource.try_as<xaml::Media::SolidColorBrush>()) {
               oldSCBrush.Color(newSCBrush.Color());
@@ -121,10 +126,14 @@ struct BrushCache {
         return RegisterBrush(resourceName, brush);
       }
 
-      const auto appResources{winrt::Application::Current().Resources()};
+      auto resources{winrt::Application::Current().Resources()};
+      if (auto element{winrt::Microsoft::ReactNative::XamlHelper::GetRequestedTheme()}) {
+        resources = element.Resources();
+      }
+
       const auto boxedResourceName{winrt::box_value(resourceName)};
-      if (appResources.HasKey(boxedResourceName)) {
-        winrt::IInspectable resource{appResources.Lookup(boxedResourceName)};
+      if (resources.HasKey(boxedResourceName)) {
+        winrt::IInspectable resource{resources.Lookup(boxedResourceName)};
 
         if (auto brush = resource.try_as<xaml::Media::Brush>()) {
           return RegisterBrush(resourceName, brush);

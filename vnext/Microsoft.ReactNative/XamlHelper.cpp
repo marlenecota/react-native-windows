@@ -42,6 +42,18 @@ folly::dynamic XamlHelper::GetFollyDynamicFromValueProvider(JSValueArgWriter con
   return writer->TakeValue();
 }
 
+void XamlHelper::SetRequestedTheme(xaml::ElementTheme const &theme) noexcept {
+  xaml::FrameworkElement element{xaml::Controls::Border()};
+  element.RequestedTheme(theme);
+  requestedTheme = element;
+}
+
+xaml::FrameworkElement XamlHelper::GetRequestedTheme() noexcept {
+  return requestedTheme.has_value() ? *requestedTheme : nullptr;
+}
+
+std::optional<xaml::FrameworkElement> XamlHelper::requestedTheme;
+
 } // namespace winrt::Microsoft::ReactNative::implementation
 
 namespace Microsoft::ReactNative {

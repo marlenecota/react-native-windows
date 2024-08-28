@@ -85,7 +85,13 @@ void Appearance::InitOnUIThread(const Mso::React::IReactContext &context) noexce
 }
 
 void Appearance::setColorScheme(std::string style) noexcept {
-  // no-op
+  if (style == "light") {
+    winrt::Microsoft::ReactNative::XamlHelper::SetRequestedTheme(xaml::ElementTheme::Light);
+  } else if (style == "dark") {
+    winrt::Microsoft::ReactNative::XamlHelper::SetRequestedTheme(xaml::ElementTheme::Dark);
+  } else {
+    winrt::Microsoft::ReactNative::XamlHelper::SetRequestedTheme(xaml::ElementTheme::Default);
+  }
 }
 
 std::optional<std::string> Appearance::getColorScheme() noexcept {
