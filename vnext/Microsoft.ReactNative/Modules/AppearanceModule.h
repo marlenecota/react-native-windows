@@ -18,6 +18,7 @@ struct AppearanceChangeArgs {
 REACT_MODULE(Appearance)
 struct Appearance : std::enable_shared_from_this<Appearance> {
   using ApplicationTheme = xaml::ApplicationTheme;
+  using ElementTheme = xaml::ElementTheme;
   using UISettings = winrt::Windows::UI::ViewManagement::UISettings;
   using ModuleSpec = ReactNativeSpecs::AppearanceSpec;
 
@@ -44,12 +45,16 @@ struct Appearance : std::enable_shared_from_this<Appearance> {
 
  private:
   static const char *ToString(ApplicationTheme theme) noexcept;
+
+  ApplicationTheme ToApplicationTheme(ElementTheme theme) noexcept;
   ApplicationTheme GetCurrentTheme() noexcept;
   void RequeryTheme() noexcept;
 
   winrt::Microsoft::ReactNative::ReactContext m_context;
   UISettings m_uiSettings;
   UISettings::ColorValuesChanged_revoker m_revoker;
+
+  bool m_colorSchemeSet{false};
 };
 
 } // namespace Microsoft::ReactNative

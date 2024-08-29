@@ -54,6 +54,27 @@ inline Application TryGetCurrentApplication() noexcept {
   }
 }
 
+// Return Window::Current() when it is present or nullptr otherwise.
+// It does not throw exception as Window::Current() does.
+inline Window TryGetCurrentWindow() noexcept {
+#ifndef USE_WINUI3
+  constexpr auto xamlDll = L"Windows.UI.Xaml.dll";
+#else
+  constexpr auto xamlDll = L"Microsoft.UI.Xaml.dll";
+#endif
+
+  if (auto xamlIsLoaded = WINRT_IMPL_GetModuleHandleW(xamlDll)) {
+    auto windowStatics = get_activation_factory<IWindowStatics>(name_of<Window>());
+    auto abiWindowStatics = static_cast<impl::abi_t<IWindowStatics> *>(get_abi(windowStatics));
+    void *value{};
+    abiWindowStatics->get_Current(&value);
+    return Window{value, take_ownership_from_abi};
+  } else {
+    // If we don't have XAML loaded, we are not a XAML app
+    return nullptr;
+  }
+}
+
 // Using Windows::UI::ColorHelper causes the process to load Windows.UI.Xaml.dll which is not needed just to fill a
 // Color struct
 inline winrt::Windows::UI::Color FromArgb(uint8_t a, uint8_t r, uint8_t g, uint8_t b) {

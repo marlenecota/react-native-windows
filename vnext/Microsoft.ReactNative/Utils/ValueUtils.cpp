@@ -72,6 +72,8 @@ xaml::Media::Brush BrushFromTheme(winrt::hstring resourceName) {
 struct BrushCache {
   std::map<winrt::hstring, xaml::Media::Brush> m_map;
   winrt::Windows::UI::ViewManagement::UISettings m_uiSettings{nullptr};
+  xaml::FrameworkElement m_window{xaml::Window::Current().Content().as<xaml::FrameworkElement>()};
+
   BrushCache() {
     m_map = {
         {L"SystemAccentColor", {nullptr}},
@@ -89,10 +91,34 @@ struct BrushCache {
     auto dq = winrt::dispatching::DispatcherQueue::GetForCurrentThread();
     m_uiSettings.ColorValuesChanged([this, dq](auto &&sender, auto &&args) {
       dq.TryEnqueue([this]() {
-        auto resources{winrt::Application::Current().Resources()};
-        if (auto element{winrt::Microsoft::ReactNative::XamlHelper::GetRequestedTheme()}) {
-          resources = element.Resources();
+        auto resources{winrt::Microsoft::ReactNative::XamlHelper::GetPlatformColorSource()};
+
+        for (auto &entry : m_map) {
+          winrt::IInspectable resource{resources.Lookup(winrt::box_value(entry.first))};
+          if (auto oldSCBrush = entry.second.try_as<xaml::Media::SolidColorBrush>()) {
+            if (auto newSCBrush = resource.try_as<xaml::Media::SolidColorBrush>()) {
+              oldSCBrush.Color(newSCBrush.Color());
+            }
+          }
+          // Similar logic can be applied to copy Acrylic or Reveal brushes
+          /*
+          else if (auto oldAcBrush = entry.second.try_as<xaml::Media::AcrylicBrush>()) {
+            if (auto newAcBrush = resource.try_as<xaml::Media::AcrylicBrush>()) {
+              // ...
+            }
+          }
+          */
         }
+      });
+    });
+
+    m_window.ActualThemeChanged([this, dq](auto &&sender, auto &&args) {
+      dq.TryEnqueue([this]() {
+        //auto resources{winrt::Microsoft::ReactNative::XamlHelper::GetPlatformColorSource()};
+        auto resources{xaml::Window::Current().Content().as<xaml::FrameworkElement>().Resources()};
+        auto theme{xaml::Window::Current().Content().as<xaml::FrameworkElement>().RequestedTheme()};
+
+
 
         for (auto &entry : m_map) {
           winrt::IInspectable resource{resources.Lookup(winrt::box_value(entry.first))};
@@ -126,14 +152,11 @@ struct BrushCache {
         return RegisterBrush(resourceName, brush);
       }
 
-      auto resources{winrt::Application::Current().Resources()};
-      if (auto element{winrt::Microsoft::ReactNative::XamlHelper::GetRequestedTheme()}) {
-        resources = element.Resources();
-      }
+      auto appResources{winrt::Microsoft::ReactNative::XamlHelper::GetPlatformColorSource()};
 
       const auto boxedResourceName{winrt::box_value(resourceName)};
-      if (resources.HasKey(boxedResourceName)) {
-        winrt::IInspectable resource{resources.Lookup(boxedResourceName)};
+      if (appResources.HasKey(boxedResourceName)) {
+        winrt::IInspectable resource{appResources.Lookup(boxedResourceName)};
 
         if (auto brush = resource.try_as<xaml::Media::Brush>()) {
           return RegisterBrush(resourceName, brush);

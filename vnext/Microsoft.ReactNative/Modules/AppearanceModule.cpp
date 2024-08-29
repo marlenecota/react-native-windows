@@ -6,9 +6,11 @@
 #include <Utils/ThemeUtils.h>
 #include <XamlUtils.h>
 #include <winrt/Windows.UI.ViewManagement.h>
+#include "IReactDispatcher.h"
 
 using Application = xaml::Application;
 using ApplicationTheme = xaml::ApplicationTheme;
+using ElementTheme = xaml::ElementTheme;
 using UISettings = winrt::Windows::UI::ViewManagement::UISettings;
 
 namespace Microsoft::ReactNative {
@@ -17,6 +19,8 @@ static const React::ReactPropertyId<ApplicationTheme> &AppearanceCurrentThemePro
   static const React::ReactPropertyId<ApplicationTheme> prop{L"ReactNative.Appearance", L"ApplicationTheme"};
   return prop;
 }
+
+//std::optional<xaml::FrameworkElement> Appearance::requestedThemeRoot;
 
 void Appearance::Initialize(winrt::Microsoft::ReactNative::ReactContext const &reactContext) noexcept {
   m_context = reactContext;
@@ -48,8 +52,25 @@ ApplicationTheme CurrentThemeFromUISettings(const winrt::Windows::UI::ViewManage
       : ApplicationTheme::Light;
 }
 
+ApplicationTheme Appearance::ToApplicationTheme(ElementTheme theme) noexcept {
+  switch (theme) {
+    case ElementTheme::Dark:
+      return ApplicationTheme::Dark;
+    case ElementTheme::Light:
+    default:
+      return ApplicationTheme::Light;
+  }
+}
+
 ApplicationTheme Appearance::GetCurrentTheme() noexcept {
   assert(m_context.UIDispatcher().HasThreadAccess()); // xaml::Application is only accessible on the UI thread
+  if (m_colorSchemeSet) {
+    if (auto currentWindow = xaml::TryGetCurrentWindow()) {
+      auto requestedThemeRoot{currentWindow.Content().as<xaml::FrameworkElement>()};
+      return ToApplicationTheme(requestedThemeRoot.RequestedTheme());
+    }
+  }
+
   if (auto currentApp = xaml::TryGetCurrentApplication()) {
     return currentApp.RequestedTheme();
   }
@@ -85,13 +106,22 @@ void Appearance::InitOnUIThread(const Mso::React::IReactContext &context) noexce
 }
 
 void Appearance::setColorScheme(std::string style) noexcept {
+  auto theme{ElementTheme::Default};
   if (style == "light") {
-    winrt::Microsoft::ReactNative::XamlHelper::SetRequestedTheme(xaml::ElementTheme::Light);
+    theme = ElementTheme::Light;
   } else if (style == "dark") {
-    winrt::Microsoft::ReactNative::XamlHelper::SetRequestedTheme(xaml::ElementTheme::Dark);
-  } else {
-    winrt::Microsoft::ReactNative::XamlHelper::SetRequestedTheme(xaml::ElementTheme::Default);
+    theme = ElementTheme::Dark;
   }
+
+  m_context.UIDispatcher().Post([theme, this]() {
+    auto requestedThemeRoot{xaml::Window::Current().Content().as<xaml::FrameworkElement>()};
+    if (requestedThemeRoot.RequestedTheme() != theme) {
+      m_colorSchemeSet = theme != ElementTheme::Default;
+      winrt::Microsoft::ReactNative::XamlHelper::SetPlatformColorSource(m_colorSchemeSet ? requestedThemeRoot : nullptr);
+      requestedThemeRoot.RequestedTheme(theme);
+      RequeryTheme();
+    }
+  });
 }
 
 std::optional<std::string> Appearance::getColorScheme() noexcept {

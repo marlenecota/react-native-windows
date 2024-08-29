@@ -23,11 +23,11 @@ struct XamlHelper : XamlHelperT<XamlHelper> {
 
   static folly::dynamic GetFollyDynamicFromValueProvider(JSValueArgWriter const &valueProvider) noexcept;
 
-  static void SetRequestedTheme(xaml::ElementTheme const &theme) noexcept;
-  static xaml::FrameworkElement GetRequestedTheme() noexcept;
+  static void SetPlatformColorSource(xaml::FrameworkElement const &element) noexcept;
+  static xaml::ResourceDictionary GetPlatformColorSource() noexcept;
 
 private:
-  static std::optional<xaml::FrameworkElement> requestedTheme;
+  static std::optional<xaml::FrameworkElement> platformColorSource;
 };
 
 } // namespace winrt::Microsoft::ReactNative::implementation
