@@ -64,7 +64,7 @@ ApplicationTheme Appearance::ToApplicationTheme(ElementTheme theme) noexcept {
 
 ApplicationTheme Appearance::GetCurrentTheme() noexcept {
   assert(m_context.UIDispatcher().HasThreadAccess()); // xaml::Application is only accessible on the UI thread
-  if (m_colorSchemeSet) {
+  if (m_useColorScheme) {
     if (auto currentWindow = xaml::TryGetCurrentWindow()) {
       auto requestedThemeRoot{currentWindow.Content().as<xaml::FrameworkElement>()};
       return ToApplicationTheme(requestedThemeRoot.RequestedTheme());
@@ -116,8 +116,9 @@ void Appearance::setColorScheme(std::string style) noexcept {
   m_context.UIDispatcher().Post([theme, this]() {
     auto requestedThemeRoot{xaml::Window::Current().Content().as<xaml::FrameworkElement>()};
     if (requestedThemeRoot.RequestedTheme() != theme) {
-      m_colorSchemeSet = theme != ElementTheme::Default;
-      winrt::Microsoft::ReactNative::XamlHelper::SetPlatformColorSource(m_colorSchemeSet ? requestedThemeRoot : nullptr);
+      m_useColorScheme = theme != ElementTheme::Default;
+      winrt::Microsoft::ReactNative::XamlHelper::UseColorScheme(m_useColorScheme);
+      //winrt::Microsoft::ReactNative::XamlHelper::SetPlatformColorSource(m_useColorScheme ? requestedThemeRoot : nullptr);
       requestedThemeRoot.RequestedTheme(theme);
       RequeryTheme();
     }

@@ -42,19 +42,15 @@ folly::dynamic XamlHelper::GetFollyDynamicFromValueProvider(JSValueArgWriter con
   return writer->TakeValue();
 }
 
-void XamlHelper::SetPlatformColorSource(xaml::FrameworkElement const &element) noexcept {
-  platformColorSource = element;
+bool XamlHelper::UseColorScheme() noexcept {
+  return useColorScheme;
 }
 
-xaml::ResourceDictionary XamlHelper::GetPlatformColorSource() noexcept {
-  if (platformColorSource.has_value()) {
-    auto theme{(*platformColorSource).RequestedTheme()};
-  }
-
-  return platformColorSource.has_value() ? (*platformColorSource).Resources() : winrt::Application::Current().Resources();
+void XamlHelper::UseColorScheme(bool value) noexcept {
+  useColorScheme = value;
 }
 
-std::optional<xaml::FrameworkElement> XamlHelper::platformColorSource;
+bool XamlHelper::useColorScheme{false};
 
 } // namespace winrt::Microsoft::ReactNative::implementation
 

@@ -59,4 +59,6 @@ winrt::Windows::UI::Color ColorFromNumber(DWORD argb) noexcept;
 bool IsValidOptionalColorValue(const winrt::Microsoft::ReactNative::JSValue &v);
 std::optional<winrt::Windows::UI::Color> OptionalColorFrom(const winrt::Microsoft::ReactNative::JSValue &v);
 
+xaml::ResourceDictionary GetResources() noexcept;
+
 } // namespace Microsoft::ReactNative

@@ -69,6 +69,12 @@ xaml::Media::Brush BrushFromTheme(winrt::hstring resourceName) {
   return brush;
 }
 
+xaml::ResourceDictionary GetResources() noexcept {
+  return winrt::Microsoft::ReactNative::XamlHelper::UseColorScheme()
+      ? xaml::Window::Current().Content().as<xaml::FrameworkElement>().Resources()
+      : xaml::Application::Current().Resources();
+}
+
 struct BrushCache {
   std::map<winrt::hstring, xaml::Media::Brush> m_map;
   winrt::Windows::UI::ViewManagement::UISettings m_uiSettings{nullptr};
@@ -91,7 +97,7 @@ struct BrushCache {
     auto dq = winrt::dispatching::DispatcherQueue::GetForCurrentThread();
     m_uiSettings.ColorValuesChanged([this, dq](auto &&sender, auto &&args) {
       dq.TryEnqueue([this]() {
-        auto resources{winrt::Microsoft::ReactNative::XamlHelper::GetPlatformColorSource()};
+        auto resources{GetResources()};
 
         for (auto &entry : m_map) {
           winrt::IInspectable resource{resources.Lookup(winrt::box_value(entry.first))};
@@ -115,10 +121,8 @@ struct BrushCache {
     m_window.ActualThemeChanged([this, dq](auto &&sender, auto &&args) {
       dq.TryEnqueue([this]() {
         //auto resources{winrt::Microsoft::ReactNative::XamlHelper::GetPlatformColorSource()};
-        auto resources{xaml::Window::Current().Content().as<xaml::FrameworkElement>().Resources()};
+        auto resources{GetResources()};
         auto theme{xaml::Window::Current().Content().as<xaml::FrameworkElement>().RequestedTheme()};
-
-
 
         for (auto &entry : m_map) {
           winrt::IInspectable resource{resources.Lookup(winrt::box_value(entry.first))};
@@ -152,7 +156,7 @@ struct BrushCache {
         return RegisterBrush(resourceName, brush);
       }
 
-      auto appResources{winrt::Microsoft::ReactNative::XamlHelper::GetPlatformColorSource()};
+      auto appResources{GetResources()};
 
       const auto boxedResourceName{winrt::box_value(resourceName)};
       if (appResources.HasKey(boxedResourceName)) {

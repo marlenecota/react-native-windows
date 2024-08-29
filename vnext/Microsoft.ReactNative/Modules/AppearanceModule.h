@@ -54,7 +54,7 @@ struct Appearance : std::enable_shared_from_this<Appearance> {
   UISettings m_uiSettings;
   UISettings::ColorValuesChanged_revoker m_revoker;
 
-  bool m_colorSchemeSet{false};
+  bool m_useColorScheme{false};
 };
 
 } // namespace Microsoft::ReactNative
