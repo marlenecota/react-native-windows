@@ -120,9 +120,7 @@ struct BrushCache {
 
     m_window.ActualThemeChanged([this, dq](auto &&sender, auto &&args) {
       dq.TryEnqueue([this]() {
-        //auto resources{winrt::Microsoft::ReactNative::XamlHelper::GetPlatformColorSource()};
         auto resources{GetResources()};
-        auto theme{xaml::Window::Current().Content().as<xaml::FrameworkElement>().RequestedTheme()};
 
         for (auto &entry : m_map) {
           winrt::IInspectable resource{resources.Lookup(winrt::box_value(entry.first))};
@@ -131,14 +129,6 @@ struct BrushCache {
               oldSCBrush.Color(newSCBrush.Color());
             }
           }
-          // Similar logic can be applied to copy Acrylic or Reveal brushes
-          /*
-          else if (auto oldAcBrush = entry.second.try_as<xaml::Media::AcrylicBrush>()) {
-            if (auto newAcBrush = resource.try_as<xaml::Media::AcrylicBrush>()) {
-              // ...
-            }
-          }
-          */
         }
       });
     });

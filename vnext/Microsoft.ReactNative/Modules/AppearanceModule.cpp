@@ -20,8 +20,6 @@ static const React::ReactPropertyId<ApplicationTheme> &AppearanceCurrentThemePro
   return prop;
 }
 
-//std::optional<xaml::FrameworkElement> Appearance::requestedThemeRoot;
-
 void Appearance::Initialize(winrt::Microsoft::ReactNative::ReactContext const &reactContext) noexcept {
   m_context = reactContext;
 
@@ -118,7 +116,6 @@ void Appearance::setColorScheme(std::string style) noexcept {
     if (requestedThemeRoot.RequestedTheme() != theme) {
       m_useColorScheme = theme != ElementTheme::Default;
       winrt::Microsoft::ReactNative::XamlHelper::UseColorScheme(m_useColorScheme);
-      //winrt::Microsoft::ReactNative::XamlHelper::SetPlatformColorSource(m_useColorScheme ? requestedThemeRoot : nullptr);
       requestedThemeRoot.RequestedTheme(theme);
       RequeryTheme();
     }
