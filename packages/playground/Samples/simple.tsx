@@ -3,19 +3,40 @@
  * Licensed under the MIT License.
  * @format
  */
+
 import React from 'react';
-import {AppRegistry, View} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  AppRegistry,
+  useColorScheme,
+  Appearance,
+  Button,
+  Switch
+} from 'react-native';
 
-export default class Bootstrap extends React.Component {
-  render() {
-    return (
-      <View
-        accessible={true}
-        style={{borderRadius: 30, width: 60, height: 60, margin: 10}}>
-        <View style={{backgroundColor: 'magenta', width: 60, height: 60}} />
-      </View>
-    );
-  }
-}
+export const SimpleModule = () => {
+  const colorScheme = useColorScheme();
 
-AppRegistry.registerComponent('Bootstrap', () => Bootstrap);
+  return (
+    <View style={styles.container}>
+      <Text>useColorScheme(): {colorScheme}</Text>
+      <Button
+        title="change color scheme"
+        onPress={() => colorScheme === 'dark' ? Appearance.setColorScheme('light') : Appearance.setColorScheme('dark')}
+      />
+      <Switch />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+AppRegistry.registerComponent('Bootstrap', () => SimpleModule);
