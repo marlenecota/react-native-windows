@@ -22,6 +22,12 @@ struct XamlHelper : XamlHelperT<XamlHelper> {
   static void SetReactTag(xaml::DependencyObject const &dependencyObject, int64_t tag) noexcept;
 
   static folly::dynamic GetFollyDynamicFromValueProvider(JSValueArgWriter const &valueProvider) noexcept;
+
+  static bool UseColorScheme() noexcept;
+  static void UseColorScheme(bool value) noexcept;
+
+private:
+  static bool useColorScheme;
 };
 
 } // namespace winrt::Microsoft::ReactNative::implementation

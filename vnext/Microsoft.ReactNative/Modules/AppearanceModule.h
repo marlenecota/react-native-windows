@@ -38,12 +38,15 @@ struct Appearance : std::enable_shared_from_this<Appearance> {
 
  private:
   static const char *ToString(ApplicationTheme theme) noexcept;
+  ApplicationTheme ToApplicationTheme(ElementTheme theme) noexcept;
   ApplicationTheme GetCurrentTheme() noexcept;
   void RequeryTheme() noexcept;
 
   winrt::Microsoft::ReactNative::ReactContext m_context;
   UISettings m_uiSettings;
   UISettings::ColorValuesChanged_revoker m_revoker;
+
+  bool m_useColorScheme{false};
 };
 
 } // namespace Microsoft::ReactNative

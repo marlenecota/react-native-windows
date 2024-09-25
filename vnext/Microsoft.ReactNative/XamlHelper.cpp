@@ -42,6 +42,16 @@ folly::dynamic XamlHelper::GetFollyDynamicFromValueProvider(JSValueArgWriter con
   return writer->TakeValue();
 }
 
+bool XamlHelper::UseColorScheme() noexcept {
+  return useColorScheme;
+}
+
+void XamlHelper::UseColorScheme(bool value) noexcept {
+  useColorScheme = value;
+}
+
+bool XamlHelper::useColorScheme{false};
+
 } // namespace winrt::Microsoft::ReactNative::implementation
 
 namespace Microsoft::ReactNative {

@@ -26,5 +26,7 @@ namespace Microsoft.ReactNative
 
     DOC_STRING("Sets the react tag for a XAML element.")
     static void SetReactTag(XAML_NAMESPACE.DependencyObject dependencyObject, Int64 tag);
+
+    static Boolean UseColorScheme;
   };
 } // namespace Microsoft.ReactNative

@@ -69,9 +69,17 @@ xaml::Media::Brush BrushFromTheme(winrt::hstring resourceName) {
   return brush;
 }
 
+xaml::ResourceDictionary GetResources() noexcept {
+  return winrt::Microsoft::ReactNative::XamlHelper::UseColorScheme()
+      ? xaml::Window::Current().Content().as<xaml::FrameworkElement>().Resources()
+      : xaml::Application::Current().Resources();
+}
+
 struct BrushCache {
   std::map<winrt::hstring, xaml::Media::Brush> m_map;
   winrt::Windows::UI::ViewManagement::UISettings m_uiSettings{nullptr};
+  xaml::FrameworkElement m_window{xaml::Window::Current().Content().as<xaml::FrameworkElement>()};
+
   BrushCache() {
     m_map = {
         {L"SystemAccentColor", {nullptr}},
@@ -89,8 +97,10 @@ struct BrushCache {
     auto dq = winrt::dispatching::DispatcherQueue::GetForCurrentThread();
     m_uiSettings.ColorValuesChanged([this, dq](auto &&sender, auto &&args) {
       dq.TryEnqueue([this]() {
+        auto resources{GetResources()};
+
         for (auto &entry : m_map) {
-          winrt::IInspectable resource{winrt::Application::Current().Resources().Lookup(winrt::box_value(entry.first))};
+          winrt::IInspectable resource{resources.Resources().Lookup(winrt::box_value(entry.first))};
           if (auto oldSCBrush = entry.second.try_as<xaml::Media::SolidColorBrush>()) {
             if (auto newSCBrush = resource.try_as<xaml::Media::SolidColorBrush>()) {
               oldSCBrush.Color(newSCBrush.Color());
@@ -107,6 +117,21 @@ struct BrushCache {
         }
       });
     });
+
+    m_window.ActualThemeChanged([this, dq](auto &&sender, auto &&args) {
+      dq.TryEnqueue([this]() {
+        auto resources{GetResources()};
+
+        for (auto &entry : m_map) {
+          winrt::IInspectable resource{resources.Lookup(winrt::box_value(entry.first))};
+          if (auto oldSCBrush = entry.second.try_as<xaml::Media::SolidColorBrush>()) {
+            if (auto newSCBrush = resource.try_as<xaml::Media::SolidColorBrush>()) {
+              oldSCBrush.Color(newSCBrush.Color());
+            }
+          }
+        }
+      });
+    });
   }
 
   xaml::Media::Brush BrushFromResourceName(winrt::hstring resourceName) {
@@ -119,7 +144,7 @@ struct BrushCache {
       return RegisterBrush(resourceName, brush);
     }
 
-    const auto appResources{winrt::Application::Current().Resources()};
+    auto appResources{GetResources()};
     const auto boxedResourceName{winrt::box_value(resourceName)};
     if (appResources.HasKey(boxedResourceName)) {
       winrt::IInspectable resource{appResources.Lookup(boxedResourceName)};
