@@ -38,7 +38,7 @@ struct Appearance : std::enable_shared_from_this<Appearance> {
 
  private:
   static const char *ToString(ApplicationTheme theme) noexcept;
-  ApplicationTheme ToApplicationTheme(ElementTheme theme) noexcept;
+  ApplicationTheme ToApplicationTheme(xaml::ElementTheme theme) noexcept;
   ApplicationTheme GetCurrentTheme() noexcept;
   void RequeryTheme() noexcept;
 

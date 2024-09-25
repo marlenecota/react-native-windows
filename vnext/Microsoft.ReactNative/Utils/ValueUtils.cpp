@@ -100,7 +100,7 @@ struct BrushCache {
         auto resources{GetResources()};
 
         for (auto &entry : m_map) {
-          winrt::IInspectable resource{resources.Resources().Lookup(winrt::box_value(entry.first))};
+          winrt::IInspectable resource{resources.Lookup(winrt::box_value(entry.first))};
           if (auto oldSCBrush = entry.second.try_as<xaml::Media::SolidColorBrush>()) {
             if (auto newSCBrush = resource.try_as<xaml::Media::SolidColorBrush>()) {
               oldSCBrush.Color(newSCBrush.Color());
